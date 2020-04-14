@@ -20,17 +20,17 @@ RUN apt-get update && apt-get install -y \
 RUN cd /tmp && \
     wget https://github.com/ib-controller/ib-controller/releases/download/2.14.0/IBController-2.14.0.zip && \
     unzip IBController-2.14.0.zip -d /opt/IBController && \
-    wget https://download2.interactivebrokers.com/installers/tws/latest-standalone/tws-latest-standalone-linux-x64.sh && \
-    chmod +x tws-latest-standalone-linux-x64.sh && \
-    echo "n" | ./tws-latest-standalone-linux-x64.sh && \
+    wget https://download2.interactivebrokers.com/installers/ibgateway/latest-standalone/ibgateway-latest-standalone-linux-x64.sh && \
+    chmod a+x ibgateway-latest-standalone-linux-x64.sh && \
+    echo | sh ibgateway-latest-standalone-linux-x64.sh -c && \
     rm -rf /tmp/* && \
-    mv /root/Jts/954 /opt/IBJts
+    mv /root/Jts/*/* /opt/IBJts
 
 # Set up Virtual Framebuffer and VNC
 ADD vnc_init /etc/init.d/vnc
 ADD xvfb_init /etc/init.d/xvfb
 RUN chmod a+x /etc/init.d/xvfb
-ENV DISPLAY :0.0
+ENV DISPLAY :1
 
 # Set up IBConnect
 RUN mkdir -p /opt/IBJts/jars/dhmyhmeut/
@@ -47,4 +47,4 @@ ENV VNC_PASSWORD sandwiches
 
 # Start TWS
 EXPOSE 4001 5900
-CMD ["/bin/bash", "/opt/IBController/IBControllerStart.sh"]
+CMD ["/bin/bash", "DISPLAY=:1 /opt/IBController/IBControllerStart.sh"]
